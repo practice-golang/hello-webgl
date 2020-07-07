@@ -1,0 +1,46 @@
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <link rel="icon" href="data:;base64,iVBORw0KGgo=">
+    <script src="encoding.min.js"></script>
+    <script src="wasm_exec.js"></script>
+    <script>
+        if (!WebAssembly.instantiateStreaming) { // polyfill
+            WebAssembly.instantiateStreaming = async (resp, importObject) => {
+                const source = await (await resp).arrayBuffer()
+                return await WebAssembly.instantiate(source, importObject)
+            }
+        }
+
+        const go = new Go();
+        WebAssembly.instantiateStreaming(fetch("hello-webgl.wasm"), go.importObject).then((result) => {
+            go.run(result.instance)
+            console.log(myVert)
+        }).catch((err) => {
+            console.error(err)
+        })
+    </script>
+    <style>
+        body,
+        pre {
+            margin: 0;
+            padding: 0;
+        }
+
+        #gocanvas {
+            position: fixed;
+            opacity: 1.0;
+            width: 100%;
+            height: 100%;
+            top: 0;
+            right: 0;
+            bottom: 0;
+            left: 0;
+        }
+    </style>
+</head>
+
+<body><canvas id="gocanvas">Your browser doesn't appear to support the canvas tag.</canvas></body>
+
+</html>
